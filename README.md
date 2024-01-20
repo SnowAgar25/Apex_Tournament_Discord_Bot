@@ -49,11 +49,6 @@ pip install pipenv
 pipenv install
 ```
 
-更新套件
-```shell
-./update.cmd
-```
-
 # tokens.json
 ```
 [  
