@@ -5,6 +5,9 @@ score_image: true
 # 其他設定
 font: "./assets/TaipeiSansTCBeta-Bold.ttf"
 
+# broadcast
+channels_regexp: 隊伍\d+
+
 # score_image
 image_for_score: "./assets/apex_background.png"
 image_with_color_block: "./assets/apex_with_color_block.png"
