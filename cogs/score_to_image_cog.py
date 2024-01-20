@@ -108,8 +108,8 @@ class GameScores:
         """
 
         # 創建一個正則表達式，用於匹配場次名稱
-        # 倘若將練習放入round_name_map，則會讓is_bonus判斷錯誤，是以將["練習"]放此。（透過unittest發現）
-        round_name_map_for_split = round_name_map + ["練習"]
+        # 倘若將額外分放入round_name_map，則會讓is_bonus判斷錯誤，是以將["額外分"]放此。（透過unittest發現）
+        round_name_map_for_split = round_name_map + ["額外分"]
         round_name_pattern = "|".join(map(re.escape, round_name_map_for_split))
         round_name_regex = re.compile(f"({round_name_pattern})")
 
@@ -171,7 +171,7 @@ class GameScores:
         """
         team_len = len(self.team_dict)
         for key, round in self.data_dict.items():
-            if key == "練習":
+            if key == "額外分":
                 continue
 
             if team_len != len(round):
@@ -339,7 +339,7 @@ class GameScores:
                 row = [team_list[index-1], value]
                 rows.append(row)
 
-            message_dict.update({"練習賽Bonus": f"**練習賽Bonus**\n```{table2ascii(header=header, body=rows, style=PresetStyle.borderless)}```"})
+            message_dict.update({"額外分": f"**額外分**\n```{table2ascii(header=header, body=rows, style=PresetStyle.borderless)}```"})
             return message_dict
         
         def process_total_data(summed_data):
