@@ -20,8 +20,8 @@
 
 # 注意，廣播目前沒有支援多伺服器使用，只能自行使用，否則會出現Bug
 1. 到專案的資料夾裏，在主目錄自行新增tokens.json，並按照下述格式輸入資料。
-創建機器人Token：https://discord.com/developers/applications
-取得Token跟邀請url教學：https://ithelp.ithome.com.tw/articles/10262736
+    - 創建機器人Token：https://discord.com/developers/applications
+    - 取得Token跟邀請url教學：https://ithelp.ithome.com.tw/articles/10262736
 
 2. 安裝必要軟體，再安裝套件。
 
@@ -32,13 +32,13 @@
 5. 若需要使用廣播功能，需自行更改Regex獲取要廣播的頻道（頻道名需有規律性，因爲使用Regex），請到config更改。
 
 # 必要軟體
-FFmpeg，並把/bin添加進PATH環境變數
-下載網址：https://ffmpeg.org/download.html
-安裝教學：https://withhh0525.weebly.com/tutorials/ffmpeg
+- FFmpeg，並把/bin添加進PATH環境變數
+    - 下載網址：https://ffmpeg.org/download.html
+    - 安裝教學：https://withhh0525.weebly.com/tutorials/ffmpeg
 
-Python 3.10.7，安裝時記得勾選添加PATH環境變數
-下載網址：https://www.python.org/downloads/release/python-3107/
-安裝教學：https://www.codingspace.school/blog/2021-04-07
+- Python 3.10.7，安裝時記得勾選添加PATH環境變數
+    - 下載網址：https://www.python.org/downloads/release/python-3107/
+    - 安裝教學：https://www.codingspace.school/blog/2021-04-07
 
 # 安裝套件
 虛擬環境和安裝pypi套件。
@@ -88,5 +88,8 @@ pipenv install
 1. \>broadcast (>bc): 後面加上文字，把文字添加進廣播佇列。
 2. \>reset (>rst)：直接重置整個廣播任務，用於機器人意外卡住，或是想取消廣播之際。
 
+# 計分指令
+- > i
+- 詳情請見分數製圖說明，和config裏面的提示
 # 額外說明
 - 於assets資料夾的intro.mp3是廣播的開頭，可以自行替換檔案，只需命名一致即可。
