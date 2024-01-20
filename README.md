@@ -91,5 +91,10 @@ pipenv install
 # 計分指令
 - \> i
 - 詳情請見分數製圖說明，和config裏面的提示
+
+# 圖片示範
+|<img src="https://i.imgur.com/EY8CKbg.png">|<img src="https://i.imgur.com/f3VhOto.png">|
+|---|---|
+
 # 額外說明
 - 於assets資料夾的intro.mp3是廣播的開頭，可以自行替換檔案，只需命名一致即可。
