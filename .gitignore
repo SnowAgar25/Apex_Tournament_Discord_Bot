@@ -1,0 +1,13 @@
+tokens.json
+result.json
+*.zip
+*.png
+*.mp3
+*.log
+!intro.mp3
+!apex_background.png
+!apex_with_color_block.png
+
+/log
+/tmp
+/misc_py
