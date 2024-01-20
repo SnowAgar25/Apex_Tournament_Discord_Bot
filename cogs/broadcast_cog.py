@@ -9,6 +9,7 @@ import tempfile
 import re
 from typing import List
 from discord.utils import get
+import yaml
 
 tmp_directory = os.path.join(os.getcwd(), "tmp")
 
@@ -67,7 +68,10 @@ class BroadcastCog(commands.Cog):
                 if self.queue:
                     ctx, text = self.queue.pop(0)
                     mp3_path = text2mp3(text)
-                    channels = regex_channels(r"隊伍\d+", ctx.guild)
+                    
+                    with open('./config.yml', 'r', encoding='utf-8') as file:
+                        config = yaml.safe_load(file)
+                    channels = regex_channels(r"{0}".format(config["channels_regexp"]), ctx.guild)
 
                     await ctx.reply("正在廣播該訊息......")
 
