@@ -93,7 +93,7 @@ pipenv install
 - 詳情請見分數製圖說明，和config裏面的提示
 
 # 圖片示範
-|<img src="https://i.imgur.com/EY8CKbg.png">|<img src="https://i.imgur.com/f3VhOto.png">|
+|<img src="https://i.imgur.com/jkHWo0g.png">|<img src="https://i.imgur.com/f3VhOto.png">|
 |---|---|
 
 # 額外說明
