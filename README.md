@@ -14,6 +14,10 @@
 
 詳細設定在config.yml裡。
 
+沒有使用Apex官方API是因爲當初寫的時候API不太穩定。
+
+現在不知道如何，也懶得寫，有想法的自己魔改一下吧。
+
 # 注意，廣播目前沒有支援多伺服器使用，只能自行使用，否則會出現Bug
 1. 到專案的資料夾裏，在主目錄自行新增tokens.json，並按照下述格式輸入資料。
 創建機器人Token：https://discord.com/developers/applications
