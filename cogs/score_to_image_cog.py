@@ -82,8 +82,7 @@ class GameScores:
         可透過特定格式的text輸入，創建實例
         並轉換資料爲「依照類型處理」「所有場次總和」「用於圖片合成的資料」
 
-        若是輸入數據的段落包含所有場次，即「一、二、三、終、練習」，則會自動計算Bonus分數
-        TODO: 此處邏輯尚未實現
+        若是輸入數據的段落包含所有場次，則會自動計算Bonus分數
 
         self.team_dict: Dict[short_name, team_name]
         self.data_dict: Dict[場次, List[隊伍Tuple[index, ranking, kills]]]
