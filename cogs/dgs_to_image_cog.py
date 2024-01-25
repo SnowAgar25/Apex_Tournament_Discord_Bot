@@ -7,8 +7,9 @@ import numpy as np
 from dotenv import load_dotenv
 import requests
 import yaml
-from cogs.image_generator import ImageGenerator
+from table2ascii import table2ascii, PresetStyle
 
+from cogs.image_generator import ImageGenerator
 from cogs.team_selection import get_teams, send_message_of_team_select
 
 with open('./config.yml', 'r', encoding='utf-8') as file:
@@ -26,6 +27,40 @@ async def split_and_send(ctx, input_string, max_length=1900):
     # 逐一對每個片段執行 send 函數
     for chunk in chunks:
         await ctx.send(f"```\n{chunk}\n```")
+
+def custom_sort(data_list):
+                """
+                我有一個list[list]
+                第一層list代表每種數據類型，第二層list的數據代表每一隊的該數據
+                舉個例子第二層每個list裡的index=0，代表第一隊的所有類型數據
+
+                現在我有一個名為order by的list
+                它可以有多個int，例如：[0, 2]
+                這代表我想先以第一種數據類型對所有隊伍的順序進行排序，由大到小，如果有相同值的，就再以第二種數據類型排序
+                記住，排序的時候一定要讓每種資料類型的同隊伍index一起移動，每個list裡面同個index都是映射為一個隊伍
+                請用python幫我完成這個method
+
+                下面是例子
+                data_list = [
+                    [10, 20, 30, 40, 50],
+                    [15, 25, 35, 45, 55],
+                    [5, 15, 25, 35, 45]
+                ]
+
+                order_by_list = [0, 2]
+
+                output: [
+                    [50, 50, 40, 20 10],
+                    [55, 35, 45, 25, 15],
+                    [45, 25, 35, 12, 5]
+
+                ]
+                """
+                def sort_key(team):
+                    return tuple(team[i] for i in order_by)
+                sorted_data = sorted(zip(*data_list), key=sort_key, reverse=True)
+                output = [list(row) for row in zip(*sorted_data)]
+                return output
 
 class DGSToImage(commands.Cog):
     def __init__(self, bot):
@@ -72,7 +107,7 @@ class DGSToImage(commands.Cog):
                         for team_name in team_from_url
                     ]
                 except AttributeError:
-                    await ctx.reply("目前的dgs_teamname_regexp與dgs資料隊伍名稱的格式不匹配，請到config.yml重新設定")
+                    await ctx.reply("目前的dgs_teamname_regexp與dgs資料隊伍名稱的格式不匹配，請到config.yml重新設定，或者請輸入正確的自訂比賽場次")
                     return
 
                 await ctx.reply(f"已獲取用於匹配本地資料的隊名```\n{team_from_url}\n```")
@@ -114,44 +149,18 @@ class DGSToImage(commands.Cog):
                 kill_bonus, 
                 total_score
             ]
-        
+
+            # 驗證訊息
+            header = ['隊伍', "總擊殺", '總排名分', 'Bonus', '總分數']
+            rows = [value, total_kills, total_ranking_score, kill_bonus, total_score]
+            rows = custom_sort(rows)
+            rows = list(zip(*rows))
+            message = f"**總結**\n```{table2ascii(header=header, body=rows, style=PresetStyle.borderless)}```"
+            await ctx.reply(message)
+
+
             # 獲取符合圖片的資料 from get_data_for_image_format
             data_for_image = [data_for_image[i] for i in output_data]
-
-            def custom_sort(data_list):
-                """
-                我有一個list[list]
-                第一層list代表每種數據類型，第二層list的數據代表每一隊的該數據
-                舉個例子第二層每個list裡的index=0，代表第一隊的所有類型數據
-
-                現在我有一個名為order by的list
-                它可以有多個int，例如：[0, 2]
-                這代表我想先以第一種數據類型對所有隊伍的順序進行排序，由大到小，如果有相同值的，就再以第二種數據類型排序
-                記住，排序的時候一定要讓每種資料類型的同隊伍index一起移動，每個list裡面同個index都是映射為一個隊伍
-                請用python幫我完成這個method
-
-                下面是例子
-                data_list = [
-                    [10, 20, 30, 40, 50],
-                    [15, 25, 35, 45, 55],
-                    [5, 15, 25, 35, 45]
-                ]
-
-                order_by_list = [0, 2]
-
-                output: [
-                    [50, 50, 40, 20 10],
-                    [55, 35, 45, 25, 15],
-                    [45, 25, 35, 12, 5]
-
-                ]
-                """
-                def sort_key(team):
-                    return tuple(team[i] for i in order_by)
-                sorted_data = sorted(zip(*data_list), key=sort_key, reverse=True)
-                output = [list(row) for row in zip(*sorted_data)]
-                return output
-            
             data_for_image = custom_sort(data_for_image)
 
             image_generator = ImageGenerator()
