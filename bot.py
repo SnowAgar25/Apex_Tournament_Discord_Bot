@@ -9,6 +9,7 @@ import yaml
 
 from cogs.broadcast_cog import BroadcastCog
 from cogs.score_to_image_cog import ScoreToImage
+from cogs.dgs_to_image_cog import DGSToImage
 
 class BotEntry(NamedTuple):
     name: str
@@ -51,6 +52,9 @@ async def on_ready():
     if config['score_image']:
         await main_entry.client.add_cog(ScoreToImage(main_entry.client))
         print("🎈開啓計分&圖片")
+    if config['dgs_to_image']:
+        await main_entry.client.add_cog(DGSToImage(main_entry.client))
+        print("🎈開啓DGS轉")
 
     print("✅ 啓動成功（若要關閉請使用Ctrl+C）")
 

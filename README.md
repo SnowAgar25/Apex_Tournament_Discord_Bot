@@ -33,6 +33,9 @@
 
 5. 若需要使用廣播功能，需自行更改Regex獲取要廣播的頻道（頻道名需有規律性，因爲使用Regex），請到config更改。
 
+6. 如果要使用DGS轉圖片，請在根目錄新增.env檔案，並且填入DGS的Token，然後重啓Bot，格式：DGS_AUTH=\"xxx\"
+   - https://apexlegendsstatus.com/tournament/profile 
+
 # 必要軟體
 - FFmpeg，並把/bin添加進PATH環境變數
     - 下載網址：https://ffmpeg.org/download.html
@@ -86,8 +89,11 @@ pipenv install
 2. \>reset (>rst)：直接重置整個廣播任務，用於機器人意外卡住，或是想取消廣播之際。
 
 # 計分指令
-- \> i
+- \>i
 - 詳情請見分數製圖說明，和config裏面的提示
+
+# DGS資料轉圖片
+- \>convert(>c) >c https://apexlegendsstatus.com/tournament/results/xxxx/Overview
 
 # 圖片示範
 |<img src="https://i.imgur.com/jkHWo0g.png">|<img src="https://i.imgur.com/f3VhOto.png">|

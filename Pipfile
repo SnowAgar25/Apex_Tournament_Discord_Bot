@@ -13,6 +13,7 @@ langid = "*"
 mutagen = "*"
 pydub = "*"
 pyyaml = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

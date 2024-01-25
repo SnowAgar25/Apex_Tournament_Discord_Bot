@@ -6,18 +6,16 @@ import yaml
 import glob
 
 from typing import Dict, List, Tuple, Set
-import cv2
 import discord
 from discord.ext import commands
-from PIL import Image, ImageDraw, ImageFont
 
-import io
 import logging
-
-import numpy as np
 
 from table2ascii import table2ascii, PresetStyle
 from typing import Dict, Tuple, List
+
+from cogs.image_generator import ImageGenerator
+from cogs.team_selection import send_message_of_team_select, get_teams
 
 with open('./config.yml', 'r', encoding='utf-8') as file:
     config = yaml.safe_load(file)
@@ -25,7 +23,6 @@ with open('./config.yml', 'r', encoding='utf-8') as file:
     ranking_score_map = config["ranking_score_map"]
     kill_ranking_bonus_score_map = config["kill_ranking_bonus_score_map"]
     output_data = config["output_data"]
-    output_color = config["output_color"]
     order_by = config["order_by"]
 
 class ScoreToImage(commands.Cog):
@@ -77,7 +74,6 @@ class ScoreToImage(commands.Cog):
         await game.send_data_message_for_recheck(ctx)
         await ctx.send(info_message)
         await ctx.send(file=file)
-
 class GameScores:
     def __init__(self, team_dict, data_dict, practise_teams_for_bonus):
         """
@@ -292,9 +288,10 @@ class GameScores:
         獲取符合圖片的資料
         output: List[Tuple]
 
-        [List[簡稱], List[隊名], List[總擊殺數], List[總分數]]，並且按照總分數排列順序
+        獲取資料類型由 output_data 決定，並且按照 order_by 排列順序
         """
         data = self.get_sum_of_data()
+
         # 從每個data裏面，只獲取指定的數據
         data = [tuple(t[i] for i in output_data) for t in data]
         # 按照 指定的數據 排序
@@ -374,141 +371,6 @@ class GameScores:
             view.add_item(button)
 
         await ctx.send(text_dict[text_dict_keys[0]], view=view)
-
-
-class ImageGenerator:
-    """專門負責生成圖片的類"""
-
-    def __init__(self):
-        with open('./config.yml', 'r', encoding='utf-8') as file:
-            config = yaml.safe_load(file)
-
-        self.font_path = config["font"]
-        self.image_for_score = config["image_for_score"]
-        self.image_with_color_block = config["image_with_color_block"]
-
-        # 顏色順序對應(第幾場, 簡稱, 隊名, 擊殺數, 總分)
-        self.colors = config["output_color"]
-
-    async def add_text_to_image(self, data_list: collections.OrderedDict):
-        detect_img = cv2.imread(self.image_with_color_block)
-        img = Image.open(self.image_for_score)
-
-        black = (0, 0, 0)
-        white = (255, 255, 255)
-
-        text_h_offset = -2
-
-        # img_pli = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        draw = ImageDraw.Draw(img)
-
-        for color, datas in zip(self.colors, data_list):
-            # 反正就是關於inRange使用hsv，所以RGB偵測不到，只能轉換過來
-            R, G, B = color
-            mask = cv2.inRange(detect_img, np.array([B, G, R]), np.array([B, G, R]))
-            contours, hierarchy = cv2.findContours(
-                mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-            )
-
-            rects = []
-            for cnt in contours:
-                area = cv2.contourArea(cnt)
-                if area > 100:  # 去除太小的輪廓
-                    x, y, w, h = cv2.boundingRect(cnt)
-                    rects.append((x, y, x + w, y + h))
-
-            i = 1  # 紀錄每個顏色矩形的順序
-
-            for cnt, data in zip(
-                sorted(
-                    contours, key=lambda x: (cv2.boundingRect(x)[0], cv2.boundingRect(x)[1])
-                ),
-                datas,
-            ):
-                x, y, w, h = cv2.boundingRect(cnt)
-                text = str(data)
-
-                scale = 0.75
-                fontScale = int(min(w, h)) * scale
-
-                font = ImageFont.truetype(self.font_path, int(fontScale))
-                text_x, text_y, text_w, text_h = draw.textbbox((0, 0), text, font)
-
-                text_x = x + w / 2 - text_w / 2
-                text_y = y + h / 2 - text_h / 2 + text_h_offset  # 計算文字應該在矩形中的y座標
-
-                draw.text((int(text_x), int(text_y)), text, font=font, fill=white)
-
-                i += 1
-
-        img_bytes = io.BytesIO()
-        img.save(img_bytes, format="PNG")
-
-        img_bytes.seek(0)
-        return img_bytes
-
-class SelectTeamButton(discord.ui.Button):
-    def __init__(self, label, team_view, *args, **kwargs):
-        super().__init__(label=label, *args, **kwargs)
-        self.team_view : discord.ui.View = team_view  # Changed the name here
-
-    async def callback(self, interaction: discord.Interaction):
-        # 禁止再次使用按鈕
-        for item in self.team_view.children:
-            item.disabled = True
-
-        # 更新callback的內容，好讓disabled起效
-        await interaction.message.edit(view=self.team_view)
-
-        # 儲存選擇的隊伍
-        self.team_view.selected_team = self.label
-
-        if self.label == '取消':
-            await interaction.response.send_message(content=f"已取消執行")
-        else:
-            await interaction.response.send_message(content=f"已選擇{self.label}，請稍待片刻")
-
-        self.team_view.stop()
-
-
-class TeamSelectorView(discord.ui.View):
-    def __init__(self, team_path, timeout):
-        super().__init__(timeout=timeout)
-        self.selected_team = None  # This will store the selected team
-        for key in team_path.keys():
-            # Pass the view instance to the SelectTeamButton
-            self.add_item(SelectTeamButton(label=key, team_view=self, style=discord.ButtonStyle.primary))
-
-async def send_message_of_team_select(ctx: commands.Context):
-    json_paths_dict = {}
-    for json_path in glob.glob(os.path.join('./data', '*.json')):
-        filename, _ = os.path.splitext(os.path.basename(json_path))
-        json_paths_dict[filename] = json_path
-
-    json_paths_dict.update({'取消': None})
-
-    view = TeamSelectorView(team_path=json_paths_dict, timeout=30)
-
-    # Sending the message with the buttons
-    await ctx.send(content="請選擇資料隊伍", view=view)
-
-    # Waiting for the interaction to be completed (or timeout)
-    await view.wait()
-
-    value = json_paths_dict.get(view.selected_team)
-    if value is not None:
-        return value
-    else:
-        await ctx.send("沒有選擇隊伍，已取消")
-        return None
-
-
-async def get_teams(path) -> Dict[str, str]:
-    """
-    output: Dict[簡稱: 隊名]
-    """
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
 
 
 async def setup(bot: commands.Bot) -> None:

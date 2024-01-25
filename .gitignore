@@ -1,5 +1,7 @@
 tokens.json
 result.json
+
+.env
 *.zip
 *.png
 *.mp3
@@ -11,3 +13,4 @@ result.json
 /log
 /tmp
 /misc_py
+/cogs/__pycache__
