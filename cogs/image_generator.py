@@ -17,7 +17,7 @@ class ImageGenerator:
         self.image_for_score = config["image_for_score"]
         self.image_with_color_block = config["image_with_color_block"]
 
-        # 顏色順序對應(第幾場, 簡稱, 隊名, 擊殺數, 總分)
+        # 顏色和資料的順序對應
         self.colors = config["output_color"]
 
     async def add_text_to_image(self, data_list: collections.OrderedDict):
