@@ -9,8 +9,10 @@ result.json
 !intro.mp3
 !apex_background.png
 !apex_with_color_block.png
+!data/隊伍Example.json
 
 /log
 /tmp
 /misc_py
 /cogs/__pycache__
+/data/*.json

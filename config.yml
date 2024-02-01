@@ -7,8 +7,8 @@ dgs_to_image: true
 font: "./assets/TaipeiSansTCBeta-Bold.ttf"
 
 # 從dgs獲取資料後，過濾隊伍名稱的RegExp
-# dgs_teamname_regexp: \d+\.\s*(.*)
-dgs_teamname_regexp: 
+dgs_teamname_regexp: \d+\.\s*(.*)
+# dgs_teamname_regexp: 
 
 # broadcast
 channels_regexp: 隊伍\d+

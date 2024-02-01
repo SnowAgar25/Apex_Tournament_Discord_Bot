@@ -114,6 +114,10 @@ class DGSToImage(commands.Cog):
 
             team_path = await send_message_of_team_select(ctx)
             team_dict: Dict[str, str] = await get_teams(team_path)
+
+            if not team_dict:
+                return
+
             key, value = team_dict.keys(), team_dict.values()
 
             if set(team_from_url) == set(value):
@@ -132,6 +136,9 @@ class DGSToImage(commands.Cog):
                 } for i in range(len(json_data['teamData']))
             ]
 
+            value_to_key_map = {v: k for k, v in team_dict.items()}
+            # 根據list的順序獲取相對應的鍵
+            full_teamnames = [value_to_key_map[value] for value in team_from_url if value in value_to_key_map]
             total_kills = [team.get("kills") for team in data_from_url]
             total_ranking_score = calc_custom_ranking_score([team.get("ranking") for team in data_from_url])
             kill_bonus = calc_custom_kill_ranking_score(total_kills)
@@ -142,8 +149,8 @@ class DGSToImage(commands.Cog):
 
             # [簡稱, 隊名, 總擊殺, 總排名分, Kill_Bonus, 總分數]
             data_for_image = [
-                value, # 隊伍簡稱
-                key, # 隊伍名稱
+                team_from_url, # 隊伍簡稱
+                full_teamnames, # 隊伍名稱
                 total_kills, 
                 total_ranking_score, 
                 kill_bonus, 
@@ -152,7 +159,7 @@ class DGSToImage(commands.Cog):
 
             # 驗證訊息
             header = ['隊伍', "總擊殺", '總排名分', 'Bonus', '總分數']
-            rows = [value, total_kills, total_ranking_score, kill_bonus, total_score]
+            rows = [team_from_url, total_kills, total_ranking_score, kill_bonus, total_score]
             rows = custom_sort(rows)
             rows = list(zip(*rows))
             message = f"**總結**\n```{table2ascii(header=header, body=rows, style=PresetStyle.borderless)}```"
