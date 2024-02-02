@@ -97,11 +97,12 @@ pipenv install
 - 詳情請見分數製圖說明，和config裏面的提示
 
 # DGS資料轉圖片
-- \>convert(>c) >c https://apexlegendsstatus.com/tournament/results/xxxx/Overview
+- \>convert(>c) https://apexlegendsstatus.com/tournament/results/xxxx/Overview
 
 # 圖片示範
 |<img src="https://i.imgur.com/jkHWo0g.png">|<img src="https://i.imgur.com/f3VhOto.png">|
 |---|---|
+|<img src="https://i.imgur.com/E7MEKQx.png">||
 
 # 額外說明
 - 於assets資料夾的intro.mp3是廣播的開頭，可以自行替換檔案，只需命名一致即可。
