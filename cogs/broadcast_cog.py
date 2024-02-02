@@ -2,6 +2,7 @@ import os
 import asyncio
 import discord
 from discord.ext import commands
+import edge_tts
 from gtts import gTTS
 from pydub import AudioSegment
 import langid
@@ -67,7 +68,7 @@ class BroadcastCog(commands.Cog):
             try:
                 if self.queue:
                     ctx, text = self.queue.pop(0)
-                    mp3_path = text2mp3(text)
+                    mp3_path = await text2mp3(text)
                     
                     with open('./config.yml', 'r', encoding='utf-8') as file:
                         config = yaml.safe_load(file)
@@ -121,14 +122,19 @@ class BroadcastCog(commands.Cog):
         await voice_client.disconnect(force=True)
 
 
-def text2mp3(text: str):
-    lang = langid.classify(text)[0]
-    with tempfile.NamedTemporaryFile(dir=tmp_directory) as fp:
-        # 生成文本的語音
-        tts = gTTS(text=text, lang=lang)
-        text_audio_path = f'{fp.name}.mp3'
-        tts.save(text_audio_path)
+async def text2mp3(text: str):
+    with open('./config.yml', 'r', encoding='utf-8') as file:
+        config = yaml.safe_load(file)
         
+    with tempfile.NamedTemporaryFile(dir=tmp_directory) as fp:
+        text_audio_path = f'{fp.name}.mp3'
+        voice = config['tts_voice']
+        rate = '-4%'
+        volume = '+0%'
+        
+        tts = edge_tts.Communicate(text=text, voice=voice, rate=rate, volume=volume)
+        await tts.save(text_audio_path)
+
         # 加載intro音頻
         intro_audio = AudioSegment.from_mp3("./assets/intro.mp3")
         # 加載生成的文本語音

@@ -5,6 +5,7 @@ dgs_to_image: true
 
 # 其他設定
 font: "./assets/TaipeiSansTCBeta-Bold.ttf"
+tts_voice: zh-CN-YunxiNeural
 
 # 從dgs獲取資料後，過濾隊伍名稱的RegExp
 dgs_teamname_regexp: \d+\.\s*(.*)
