@@ -1,8 +1,9 @@
 tokens.json
 result.json
 
-.yml
+
 .env
+*.yml
 *.zip
 *.png
 *.mp3
