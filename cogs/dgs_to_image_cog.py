@@ -3,7 +3,6 @@ import re
 from typing import Dict, List
 import discord
 from discord.ext import commands
-import numpy as np
 from dotenv import load_dotenv
 import requests
 import yaml
@@ -93,24 +92,18 @@ class DGSToImage(commands.Cog):
             response.raise_for_status()
             json_data = response.json()
 
-            team_from_url = [
-                json_data['teamData'][i]['teamName']
-                for i in range(len(json_data['teamData']))
-            ]
+            team_names_seen = set()
+            team_from_url = []
+            for i in range(len(json_data['teamData'])):
+                team_name = json_data['teamData'][i]['teamName']
+                if dgs_teamname_regexp:
+                    team_name = pattern.search(team_name).group(1).strip()
+                if team_name not in team_names_seen:
+                    team_from_url.append(team_name)
+                    team_names_seen.add(team_name)
+
 
             await ctx.reply(f"已獲取網址資料，請選擇與之匹配的本地隊伍```\n{team_from_url}\n```")
-
-            if dgs_teamname_regexp: 
-                try:
-                    team_from_url = [
-                        pattern.search(team_name).group(1).strip()
-                        for team_name in team_from_url
-                    ]
-                except AttributeError:
-                    await ctx.reply("目前的dgs_teamname_regexp與dgs資料隊伍名稱的格式不匹配，請到config.yml重新設定，或者請輸入正確的自訂比賽場次")
-                    return
-
-                await ctx.reply(f"已獲取用於匹配本地資料的隊名```\n{team_from_url}\n```")
 
             team_path = await send_message_of_team_select(ctx)
             team_dict: Dict[str, str] = await get_teams(team_path)
