@@ -92,6 +92,14 @@ class DGSToImage(commands.Cog):
             response.raise_for_status()
             json_data = response.json()
 
+            # 這段本意是要防止「開預備房+隊名打錯編號」的情形
+            # 但由於API會將資料分別傳送，並於網頁版合併，所以算是沒什麼用
+            # 最好的方法是，盡量別開預備房，如果開了就要確保隊名一致
+            # 以下是SSS隊伍的兩段資料
+                # [4, 1, -1, -1, -1, -1]
+                # [-1, -1, 7, 13, 10, 4] 
+                # —————————————————————— or
+                # [4, 1, 7, 13, 10, 4] 
             team_names_seen = set()
             team_from_url = []
             for i in range(len(json_data['teamData'])):
@@ -134,6 +142,7 @@ class DGSToImage(commands.Cog):
             full_teamnames = [value_to_key_map[value] for value in team_from_url if value in value_to_key_map]
             total_kills = [team.get("kills") for team in data_from_url]
             total_ranking_score = calc_custom_ranking_score([team.get("ranking") for team in data_from_url])
+            await ctx.reply(f"ranking: ```{[team.get('ranking') for team in data_from_url]}```\ncalc_custom_ranking_score: ```{total_ranking_score}```")
             kill_bonus = calc_custom_kill_ranking_score(total_kills)
 
             # await ctx.reply(f"```\ntotal_kills: {type(total_kills)}\n{total_kills}\n```\n```\ntotal_ranking_score: {type(total_ranking_score)}\n{total_ranking_score}\n```\n```\nkill_bonus: {type(kill_bonus)}\n{kill_bonus}\n```")
