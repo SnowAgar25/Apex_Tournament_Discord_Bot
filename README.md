@@ -24,7 +24,9 @@
 
 現在不知道如何，也懶得寫，有想法的自己魔改一下吧。
 
-# 注意，廣播目前沒有支援多伺服器使用，只能自行使用，否則會出現Bug
+注意，廣播目前沒有支援多伺服器使用，只能自行使用，否則會出現Bug
+
+# 安裝流程 
 1. 到專案的資料夾裏，在主目錄自行新增tokens.json，並按照下述格式輸入資料。
     - 創建機器人Token：https://discord.com/developers/applications
     - 取得Token跟邀請url教學：https://ithelp.ithome.com.tw/articles/10262736
@@ -98,6 +100,7 @@ pipenv install
 
 # DGS資料轉圖片
 - \>convert(>c) https://apexlegendsstatus.com/tournament/results/xxxx/Overview
+> 這東西只要比賽房間的隊伍名稱一有問題，就會爆炸，不用爲妙。
 
 # 圖片示範
 |<img src="https://i.imgur.com/jkHWo0g.png">|<img src="https://i.imgur.com/f3VhOto.png">|
